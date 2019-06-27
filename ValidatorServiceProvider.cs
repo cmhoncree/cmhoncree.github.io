@@ -175,7 +175,7 @@ namespace InformationCamp
         public bool FloatTryParse(System.Web.UI.Page myPage, string val, string fieldname, int minvalue, int maxvalue, bool isRequired)
         {
             var isValid = true;
-            long intOutResult = 0;
+            decimal decOutResult = 0;
 
             if (isRequired)
             {
@@ -196,6 +196,17 @@ namespace InformationCamp
                 myPage.ClientScript.RegisterStartupScript(this.GetType(),
                         "showMsg", "<script>alert('[" + fieldname + "] 欄位之資料格式不正確，請重新輸入！');</script>");
                 
+                return false;
+            }
+
+            // 驗證第一碼是否為 0
+            endch = val.Where((item, index) => index == 0).Single();
+
+            if (endch == '0')
+            {
+                myPage.ClientScript.RegisterStartupScript(this.GetType(),
+                        "showMsg", "<script>alert('[" + fieldname + "] 欄位之資料格式不正確，請重新輸入！');</script>");
+
                 return false;
             }
 
@@ -223,16 +234,18 @@ namespace InformationCamp
                 }
             }
 
+            decOutResult = Convert.ToDecimal(val);
+
             if (isValid)
             {
-                if (intOutResult < minvalue)
+                if (decOutResult < minvalue)
                 {
                     myPage.ClientScript.RegisterStartupScript(this.GetType(),
                         "showMsg", "<script>alert('[" + fieldname + "] 欄位之資料應大於或等於 [" + minvalue.ToString() + "]，請重新確認！');</script>");
 
                     return false;
                 }
-                else if (intOutResult > maxvalue)
+                else if (decOutResult > maxvalue)
                 {
                     myPage.ClientScript.RegisterStartupScript(this.GetType(),
                         "showMsg", "<script>alert('[" + fieldname + "] 欄位之資料應小於或等於 [" + maxvalue.ToString() + "]，請重新確認！');</script>");
